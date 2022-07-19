@@ -46,11 +46,10 @@ export default function TableTestimoni() {
     // handleTambahEditPeserta
     // Id 0 artinya post, selain itu edit/update
     const handleTestimoni = (testimoniBaru, id = 0) => {
-        if (id == 0) {
-            setTestimoni([...testimoni, convertToDataTable(testimoniBaru)]);
-            // console.log(convertToDataTable(testimoniBaru));
+        if (id === 0) {
+            setTestimoni([ ...testimoni ]);
         } else {
-            let hasil = testimoni.findIndex((item) => item.id == id);
+            let hasil = testimoni.findIndex((item) => item.id === id);
             let tempTestimoni = [...guru];
             tempTestimoni[hasil] = testimoniBaru;
             setGuru([...tempTestimoni]);
@@ -60,7 +59,7 @@ export default function TableTestimoni() {
     // handleUpdatePeserta
     // Cari dan kirim ke form
     const updateTestimoni = (id) => {
-        let testimoni_update = testimoni.find((el) => el.id == id);
+        let testimoni_update = testimoni.find((el) => el.id === id);
         setShowForm(!showForm);
         setSingleTestimoni(testimoni_update);
     };
@@ -83,7 +82,7 @@ export default function TableTestimoni() {
                     .then((res) =>
                         setTestimoni(
                             testimoni.filter(
-                                (item) => item.id != res.data.data.id
+                                (item) => item.id !== res.data.data.id
                             )
                         )
                     );
@@ -96,15 +95,15 @@ export default function TableTestimoni() {
             return {
                 id: index,
                 id_siswa: item.id_siswa,
-                nama_siswa: siswa.filter((s) => s.id == item.id_siswa)[0]?.nama,
+                nama_siswa: siswa.filter((s) => s.id === item.id_siswa)[0]?.nama,
                 id_grup: item.id_grup,
-                nama_grup: grup.filter((g) => g.id == item.id_grup)[0]
+                nama_grup: grup.filter((g) => g.id === item.id_grup)[0]
                     ?.nama_grup,
                 id_paket: item.id_paket,
-                nama_paket: paket.filter((p) => p.id == item.id_paket)[0]
+                nama_paket: paket.filter((p) => p.id === item.id_paket)[0]
                     ?.nama_paket,
                 id_jenjang: item.id_jenjang,
-                nama_jenjang: jenjang.filter((j) => j.id == item.id_jenjang)[0]
+                nama_jenjang: jenjang.filter((j) => j.id === item.id_jenjang)[0]
                     ?.nama_jenjang,
                 id_pendaftaran: item.id_pendaftaran,
                 deskripsi: item.deskripsi,

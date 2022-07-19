@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import Swal from "sweetalert2";
 
 export default function FormTestimoni({
+    setTestimoni,
     showForm,
     setShowForm,
     handleTestimoni,
@@ -32,7 +33,7 @@ export default function FormTestimoni({
                 let hasil = res.data.data.map((item) => {
                     return {
                         ...item,
-                        nama: nama_siswa.filter((s) => s.id == item.id_siswa)[0]
+                        nama: nama_siswa.filter((s) => s.id === item.id_siswa)[0]
                             ?.nama,
                     };
                 });
@@ -61,7 +62,7 @@ export default function FormTestimoni({
         let hasil = pendaftaran.map((item) => {
             return {
                 ...item,
-                nama: siswa.filter((s) => s.id == item.id_siswa)[0]?.nama,
+                nama: siswa.filter((s) => s.id === item.id_siswa)[0]?.nama,
             };
         });
         // console.log(hasil)
@@ -82,12 +83,9 @@ export default function FormTestimoni({
         axios
             .post(`${process.env.REACT_APP_API}/testimoni`, formData)
             .then((res) => {
-                axios
-                    .get(
-                        `${process.env.REACT_APP_API}/testimoni/${res.data.data.id}`
-                    )
+                axios.get(`${process.env.REACT_APP_API}/testimoni`)
                     .then((res) => {
-                        handleTestimoni(res.data.data);
+                        setTestimoni(res.data.data);
                         Swal.fire(
                             "Berhasil",
                             "Testimoni Baru Berhasil Ditambahkan!",
@@ -96,13 +94,13 @@ export default function FormTestimoni({
                     });
                 // handleTestimoni(res.data.data);
             });
-        handleShow();
+            setShowForm(false);
         // console.log(formData)
     };
 
     return (
         <div className="">
-            <div className="w-1/2 md:w-1/6 inline fixed bottom-20 md:bottom-10 right-4 md:right-10 flex justify-end">
+            <div className="w-1/2 md:w-1/6 fixed bottom-20 md:bottom-10 right-4 md:right-10 flex justify-end">
                 <button
                     className="w-5/6 bg-merah-bs text-white rounded-lg text-lg flex items-center justify-center p-2"
                     onClick={handleShow}
