@@ -8,7 +8,9 @@ export default function FormTestimoni({
     setTestimoni,
     showForm,
     setShowForm,
-    handleTestimoni,
+    method,
+    singleTestimoni,
+    setMethod
 }) {
     const [siswa, setSiswa] = useState([]);
     const [pendaftaran, setPendaftaran] = useState([]);
@@ -17,8 +19,8 @@ export default function FormTestimoni({
         nama_siswa: "",
     });
     const [formData, setFormData] = useState({
-        id_pendaftaran: 0,
-        deskripsi: "",
+        id_pendaftaran: method === 'PUT' ? singleTestimoni?.id_pendaftaran : '',
+        deskripsi:  method === 'PUT' ? singleTestimoni?.deskripsi : "",
     });
 
     useEffect(() => {
@@ -44,20 +46,6 @@ export default function FormTestimoni({
         searchTool("");
     }, []);
 
-    const resetFormData = () => {
-        setFormData({
-            id_pendaftaran: 0,
-            deskripsi: "",
-        });
-    };
-
-    const handleShow = () => {
-        if (showForm) {
-            resetFormData();
-        }
-        setShowForm(!showForm);
-    };
-
     const searchTool = (value) => {
         let hasil = pendaftaran.map((item) => {
             return {
@@ -78,37 +66,69 @@ export default function FormTestimoni({
         }
     };
 
-    const tambahTestimoni = (e) => {
-        e.preventDefault();
-        axios
+    const tambahTestimoni = async (e) => {
+        try {
+          e.preventDefault();
+
+          if (method === 'PUT') {
+            return await axios.put(`${process.env.REACT_APP_API}/testimoni/${singleTestimoni?.id_pendaftaran}`, 
+            { ...formData, id_pendaftaran: singleTestimoni?.id_pendaftaran }).then(async () => {
+              await axios.get(`${process.env.REACT_APP_API}/testimoni`)
+                .then((res) => {
+                    setTestimoni(res.data.data);
+                    Swal.fire(
+                        "Berhasil",
+                        "Testimoni Berhasil Diupdate!",
+                        "success"
+                    );
+                });
+            })
+          }
+          return await axios
             .post(`${process.env.REACT_APP_API}/testimoni`, formData)
             .then((res) => {
-                axios.get(`${process.env.REACT_APP_API}/testimoni`)
-                    .then((res) => {
-                        setTestimoni(res.data.data);
-                        Swal.fire(
-                            "Berhasil",
-                            "Testimoni Baru Berhasil Ditambahkan!",
-                            "success"
-                        );
-                    });
-                // handleTestimoni(res.data.data);
+              axios.get(`${process.env.REACT_APP_API}/testimoni`)
+                .then((res) => {
+                    setTestimoni(res.data.data);
+                    Swal.fire(
+                        "Berhasil",
+                        "Testimoni Baru Berhasil Ditambahkan!",
+                        "success"
+                    );
+                });
             });
-            setShowForm(false);
-        // console.log(formData)
+        } catch (error) {
+          console.log("error", error)
+        } finally {
+          setShowForm(false);
+        }
     };
+
+    const handleCloseForm = () => {
+      setShowForm(false)
+      setMethod('POST')
+      setFormData({
+        id_pendaftaran: '',
+        deskripsi: ''
+      })
+    }
+
+    const handleTambahTestimoni = () => {
+      setMethod('POST')
+      setShowForm(true)
+    }
 
     return (
         <div className="">
             <div className="w-1/2 md:w-1/6 fixed bottom-20 md:bottom-10 right-4 md:right-10 flex justify-end">
                 <button
                     className="w-5/6 bg-merah-bs text-white rounded-lg text-lg flex items-center justify-center p-2"
-                    onClick={handleShow}
+                    onClick={handleTambahTestimoni}
                 >
                     <span className="text-lg mr-2">
                         <i class="fa-solid fa-plus"></i>
                     </span>{" "}
-                    Tambah Testimoni
+                    { method === 'PUT' ? 'Update' :  'Tambah'} Testimoni
                 </button>
             </div>
             <div
@@ -124,11 +144,11 @@ export default function FormTestimoni({
                     >
                         <div className="header-form flex items-center relative mb-2 border-b border-abu-bs h-[10%] p-4">
                             <h1 className="text-2xl font-bold text-merah-bs tracking-widest">
-                                Tambah Testimoni
+                              { method === 'PUT' ? 'Update' :  'Tambah'} Testimoni
                             </h1>
                             <div
                                 className="close-button text-xl absolute top-0 right-4 cursor-pointer font-bold"
-                                onClick={handleShow}
+                                onClick={handleCloseForm}
                             >
                                 X
                             </div>
@@ -158,7 +178,7 @@ export default function FormTestimoni({
                                             });
                                             searchTool(e.target.value);
                                         }}
-                                        value={filterTool.nama_siswa}
+                                        value={method === 'PUT' ? singleTestimoni?.nama_siswa : filterTool.nama_siswa}
                                         // value={formPendaftaran.nama_siswa}
                                     />
                                     <div className="absolute bottom-0 right-0 w-8 h-full flex items-center cursor-pointer">
@@ -188,7 +208,12 @@ export default function FormTestimoni({
                                         Nama Siswa
                                     </h1>
                                     <ul>
-                                        {filterPendaftaran.length ? (
+                                        { method === 'PUT' && 
+                                          <li className="p-2 bg-merah-bs text-white hover:rounded-md border-b border-abu-bs">
+                                            {`${singleTestimoni?.nama_siswa} - ${singleTestimoni?.nama_grup} - ${singleTestimoni?.nama_paket}`}
+                                          </li>
+                                        }
+                                        { method !== 'PUT' && filterPendaftaran.length &&
                                             filterPendaftaran.map((item) => (
                                                 <li
                                                     className="p-2 hover:bg-merah-bs hover:text-white hover:rounded-md border-b border-abu-bs"
@@ -208,18 +233,14 @@ export default function FormTestimoni({
                                                     {`${item.nama} - ${item.nama_grup} - ${item.nama_paket}`}
                                                 </li>
                                             ))
-                                        ) : (
-                                            <p className="text-center opacity-50">
-                                                Tidak ada siswa
-                                            </p>
-                                        )}
+                                        }
                                     </ul>
                                 </div>
                             </div>
 
                             <div className="row mb-6">
                                 <div className="title mb-1">
-                                    <p>Silahkan Isi Testimoni Anda!</p>
+                                    <p>Silahkan { method === 'PUT' ? 'Update' :  'Isi'} Testimoni Anda!</p>
                                 </div>
                                 <div className="input-field">
                                     <textarea
@@ -244,7 +265,7 @@ export default function FormTestimoni({
                                 className="w-1/3 border border-black p-2 rounded-md bg-merah-bs text-white"
                                 onClick={(e) => tambahTestimoni(e)}
                             >
-                                Simpan
+                                {method === 'PUT' ? 'Update Testimoni' : 'Simpan'}
                             </button>
                         </div>
                     </form>

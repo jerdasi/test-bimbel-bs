@@ -13,10 +13,10 @@ export default function TabelTestimoni() {
 
     useEffect(() => {
         axios
-            .get("http://localhost:3000/jenjang-pendidikan")
+            .get(`${process.env.REACT_APP_API}/jenjang-pendidikan`)
             .then((res) => setJenjang(res.data.data));
         axios
-            .get("http://localhost:3000/testimoni")
+            .get(`${process.env.REACT_APP_API}/testimoni`)
             .then((res) => setTestimoni(res.data.data));
     }, []);
 
@@ -77,7 +77,7 @@ export default function TabelTestimoni() {
 
                 <div className="w-full h-full md:h-full overflow-x-auto">
                     {/* <img
-                        src="http://localhost:3000/images/peserta-didik-1656393755762-7358.jpg"
+                        src="${process.env.REACT_APP_API}/images/peserta-didik-1656393755762-7358.jpg"
                         alt=""
                     /> */}
                     <table className="w-full overflow-auto collapse">
@@ -97,7 +97,7 @@ export default function TabelTestimoni() {
                                     <td>{index + 1}</td>
                                     <td>
                                         <img
-                                            src={`http://localhost:3000/${item.foto}`}
+                                            src={`${process.env.REACT_APP_API}/${item.foto}`}
                                             alt="foto-peserta"
                                             className="h-full"
                                         />
@@ -113,7 +113,7 @@ export default function TabelTestimoni() {
                                     <td>{index + 1}</td>
                                     <td>
                                         <img
-                                            src={`http://localhost:3000/${item.foto}`}
+                                            src={`${process.env.REACT_APP_API}/${item.foto}`}
                                             alt="foto-peserta"
                                             className="h-full"
                                         />
@@ -129,7 +129,7 @@ export default function TabelTestimoni() {
                                     <td>{index + 1}</td>
                                     <td>
                                         <img
-                                            src={`http://localhost:3000/${item.foto}`}
+                                            src={`${process.env.REACT_APP_API}/${item.foto}`}
                                             alt="foto-peserta"
                                             className="w-full"
                                         />

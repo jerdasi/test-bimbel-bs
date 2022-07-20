@@ -13,12 +13,10 @@ export default function TableTestimoni() {
     const [paket, setPaket] = useState([]);
     const [jenjang, setJenjang] = useState([]);
     const [testimoni, setTestimoni] = useState([]);
+    const [method, setMethod] = useState('POST');
 
     const [guru, setGuru] = useState([]);
-    const [singleTestimoni, setSingleTestimoni] = useState({
-        id_pendaftaran: 0,
-        deskripsi: 0,
-    });
+    const [singleTestimoni, setSingleTestimoni] = useState({});
     const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {
@@ -58,11 +56,16 @@ export default function TableTestimoni() {
 
     // handleUpdatePeserta
     // Cari dan kirim ke form
-    const updateTestimoni = (id) => {
-        let testimoni_update = testimoni.find((el) => el.id === id);
+    const updateTestimoni = (val) => {
         setShowForm(!showForm);
-        setSingleTestimoni(testimoni_update);
+        setMethod('PUT');
+        setSingleTestimoni(val);
     };
+
+    useEffect(() => {
+      console.log("wkwkwk", singleTestimoni)
+      console.log("method", method)
+    }, [singleTestimoni, method])
 
     // handleHapusTestimoni
     const hapusTestimoni = (id) => {
@@ -142,7 +145,7 @@ export default function TableTestimoni() {
                         <button
                             className="p-2 border border-black rounded-md w-fit"
                             onClick={(e) =>
-                                updateTestimoni(params.row.id_testimoni)
+                                updateTestimoni(params.row)
                             }
                         >
                             <i class="fa-solid fa-pen-to-square"></i>
@@ -190,6 +193,9 @@ export default function TableTestimoni() {
                 showForm={showForm}
                 testimoni={testimoni}
                 setTestimoni={setTestimoni}
+                method={method}
+                setMethod={setMethod}
+                singleTestimoni={singleTestimoni}
             />
         </>
     );
